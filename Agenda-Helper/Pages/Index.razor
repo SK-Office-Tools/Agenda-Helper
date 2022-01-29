@@ -1,55 +1,92 @@
 ﻿@page "/"
 
-@using Agenda_Helper.Components
+@using AgendaHelper.Components
+@using AgendaHelper.Models
 
-<CopyToClipboard @ref="Clipboard">
-    <h1>Agenda</h1>
-    <p>Some agenda items to follow</p>
-    @if (AgendaItems == null)
-    {
-        <p>Add some agenda items</p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    @if (showTimings)
-                    {
-                        <th>Time</th>
-                    }
-                    <th>Item</th>
-                    <th>Presenter</th>
-                    <th>Links</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in AgendaItems)
-                {
+@if (Meeting != null)
+{
+    <CopyToClipboard @ref="Clipboard">
+        <h1>@Meeting.Title</h1>
+        <table>
+            <tr><td>Start</td><td>@Meeting.Start.ToString("HH:mm dd MMM yyyy")</td></tr>
+            <tr><td>Location</td><td>@Meeting.Location</td></tr>
+            <tr><td>Secretariat</td><td>@(string.Join(", ", Meeting.Secretariat))</td></tr>
+        </table>
+        <p>@Meeting.Description</p>
+        @if (Meeting.Agenda == null)
+        {
+            <p>No agenda items</p>
+        }
+        else
+        {
+            <table>
+                <thead>
                     <tr>
                         @if (showTimings)
                         {
-                            <td>0:10</td>
+                            <th>Time</th>
                         }
-                        <td>@item</td>
-                        <td>Bob</td>
-                        <td></td>
+                        <th>Item</th>
+                        <th>Presenter</th>
+                        <th>Links</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-    <em>Minutes will be circulated after the meeting</em>
-</CopyToClipboard>
+                </thead>
+                <tbody>
+                    @foreach (var item in Meeting.Agenda)
+                    {
+                        <tr>
+                            @if (showTimings)
+                            {
+                                <td>@item.Start.ToString("HH:mm")<br /><em>@(item.Duration)m</em></td>
+                            }
+                            <td>@item.Title</td>
+                            <td>@(item.Presenters != null ? string.Join(", ", item.Presenters) : "")</td>
+                            <td>@(item.Links != null ? string.Join(", ", item.Links): "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <em>Minutes will be circulated after the meeting</em>
+    </CopyToClipboard>
+}
+else
+{
+    <p>Invalid Meeting</p>
+}
 
 @code {
     private CopyToClipboard Clipboard { get; set; }
-    private List<string> AgendaItems { get; set; }
     private bool showTimings = true;
+    private Meeting Meeting;
 
     protected override async Task OnInitializedAsync()
     {
-        AgendaItems = new List<string> { "Introductions", "Apologies", "Main Item", "Secondary Item", "AOB", "Close" };
+        //AgendaItems = new List<string> { "Introductions", "Apologies", "Main Item", "Secondary Item", "AOB", "Close" };
+        Meeting = new Meeting
+        {
+            Start = DateTime.Now,
+            Location = "Teams Meeting",
+            Chair = "Charles Randall",
+            Title = "Meeting to discuss Nick Cook",
+            Description = "Nick Cook was a very naughty boy who said some very nasty things about the chair and he deserves to be punished.  This meeting will discuss the appropriate punishment",
+            Secretariat = new List<string> { "Andrew Sucker" },
+            Agenda = new List<AgendaItem> {
+                new AgendaItem { Order = 0, Title = "Introductions", Duration = 5, Presenters = new List<string> { "Charles Randall" } },
+                new AgendaItem { Order = 1, Title = "Apologies", Duration = 5 },
+                new AgendaItem { Order = 2, Title = "Minutes of last meeting", Duration = 5 },
+                new AgendaItem { Order = 3, Title = "Main Item", Duration = 15, Presenters = new List<string> { "Bob Smell" }, Description = "This main item is about increasing our profitability", Links = new List<string> {"https://www.google.co.uk" } },
+                new AgendaItem { Order = 4, Title = "Secondary Item", Duration = 30, Presenters = new List<string> {"Charles Randall", "Nick Cook" }, Description = "This is where Nick gets sacked" },
+                new AgendaItem { Order = 5, Title = "AOB", Duration = 10 },
+                new AgendaItem { Order = 6, Title = "Close", Duration = 5, Presenters = new List<string> { "Charles Randall" } }
+            }
+        };
+        var timer = Meeting.Start;
+        foreach (var item in Meeting.Agenda.OrderBy(i => i.Order))
+        {
+            item.Start = timer;
+            timer = timer.AddMinutes(item.Duration);
+        }
     }
 
 }
