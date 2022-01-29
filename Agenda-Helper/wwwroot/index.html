@@ -23,6 +23,16 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>window.clipboardCopy = {
+            copyText2: function (text) {
+                var data = [new ClipboardItem({ "text/html": new Blob([text.innerHTML], { type: "text/html" }) })];
+                navigator.clipboard.write(data).then(function () {
+                    console.log("Copied to clipboard successfully!");
+                }, function () {
+                    console.error("Unable to write to clipboard. :-(");
+                });
+            }
+        }</script>
 </body>
 
 </html>

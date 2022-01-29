@@ -1,7 +1,55 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@using Agenda_Helper.Components
 
-Welcome to your new app.
+<CopyToClipboard @ref="Clipboard">
+    <h1>Agenda</h1>
+    <p>Some agenda items to follow</p>
+    @if (AgendaItems == null)
+    {
+        <p>Add some agenda items</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    @if (showTimings)
+                    {
+                        <th>Time</th>
+                    }
+                    <th>Item</th>
+                    <th>Presenter</th>
+                    <th>Links</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in AgendaItems)
+                {
+                    <tr>
+                        @if (showTimings)
+                        {
+                            <td>0:10</td>
+                        }
+                        <td>@item</td>
+                        <td>Bob</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <em>Minutes will be circulated after the meeting</em>
+</CopyToClipboard>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    private CopyToClipboard Clipboard { get; set; }
+    private List<string> AgendaItems { get; set; }
+    private bool showTimings = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AgendaItems = new List<string> { "Introductions", "Apologies", "Main Item", "Secondary Item", "AOB", "Close" };
+    }
+
+}
