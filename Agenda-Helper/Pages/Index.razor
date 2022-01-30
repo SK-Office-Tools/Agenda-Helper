@@ -6,11 +6,47 @@
 @if (Meeting != null)
 {
     <CopyToClipboard @ref="Clipboard">
+        <style>
+            table, tr {
+                border-radius: 5px !important;
+                border-spacing: 0px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .ag-header {
+                border: 1px solid green;
+            }
+
+            .ag-agenda {
+                border: 1px solid lightgray;
+            }
+
+                .ag-agenda th, .ag-agenda td {
+                    border: 1px solid lightgray;
+                }
+
+            .tb-fcm {
+                background-color: green;
+                color: whitesmoke;
+            }
+
+            .tb-fcm-top {
+                border-top-left-radius: 5px;
+            }
+
+            .tb-fcm-btm {
+                border-bottom-left-radius: 5px;
+            }
+        </style>
         <h1>@Meeting.Title</h1>
-        <table>
-            <tr><td>Start</td><td>@Meeting.Start.ToString("HH:mm dd MMM yyyy")</td></tr>
-            <tr><td>Location</td><td>@Meeting.Location</td></tr>
-            <tr><td>Secretariat</td><td>@(string.Join(", ", Meeting.Secretariat))</td></tr>
+        <table class="ag-header">
+            <tr><td class="tb-fcm">Start</td><td>@Meeting.Start.ToString("dd MMM yyyy @ HH:mm")-@Meeting.End.ToString("HH:mm")</td></tr>
+            <tr><td class="tb-fcm">Location</td><td>@Meeting.Location</td></tr>
+            <tr><td class="tb-fcm">Chair</td><td>@Meeting.Chair</td></tr>
+            <tr><td class="tb-fcm tb-fcm-btm">Secretariat</td><td>@(string.Join(", ", Meeting.Secretariat))</td></tr>
         </table>
         <p>@Meeting.Description</p>
         @if (Meeting.Agenda == null)
@@ -19,7 +55,7 @@
         }
         else
         {
-            <table>
+            <table class="ag-agenda">
                 <thead>
                     <tr>
                         @if (showTimings)
@@ -87,6 +123,7 @@ else
             item.Start = timer;
             timer = timer.AddMinutes(item.Duration);
         }
+        Meeting.End = timer;
     }
 
 }
