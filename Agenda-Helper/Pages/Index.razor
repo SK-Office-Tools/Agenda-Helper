@@ -17,7 +17,7 @@
             }
 
             .ag-header {
-                border: 1px solid green;
+                border: 1px solid whitesmoke;
             }
 
             .ag-agenda {
@@ -43,7 +43,7 @@
         </style>
         <h1>@Meeting.Title</h1>
         <table class="ag-header">
-            <tr><td class="tb-fcm">Start</td><td>@Meeting.Start.ToString("dd MMM yyyy @ HH:mm")-@Meeting.End.ToString("HH:mm")</td></tr>
+            <tr><td class="tb-fcm tb-fcm-top">Start</td><td>@Meeting.Start.ToString("dd MMM yyyy @ HH:mm")-@Meeting.End.ToString("HH:mm")</td></tr>
             <tr><td class="tb-fcm">Location</td><td>@Meeting.Location</td></tr>
             <tr><td class="tb-fcm">Chair</td><td>@Meeting.Chair</td></tr>
             <tr><td class="tb-fcm tb-fcm-btm">Secretariat</td><td>@(string.Join(", ", Meeting.Secretariat))</td></tr>
